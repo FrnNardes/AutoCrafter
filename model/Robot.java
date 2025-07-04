@@ -7,23 +7,30 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 
 public class Robot  extends Thread{
-  private int id;
-  private List<Position> path;
-  private ImageView pathVisual;
-  private ImageView sprite;
-  private Slider slider;
+  // --- Atributos de Identificação e UI ---
+  private final int id;
+  private final ImageView sprite; // O visual do robô na tela
+  private final ImageView pathVisual;
+  private final List<Position> path;
+  private final SimulationController controller;
+  private final Slider slider;
 
-  private SimulationController controller;
-
-  // NOVO ATRIBUTO: 
-  private CriticalRegion currentAcquiredCriticalRegion = null;
-
+  // --- Variáveis de Estado (Ponte entre Threads) ---
+  // volatile garante que alterações em uma thread sejam imediatamente visíveis na outra.
   private volatile boolean running = true;
   private volatile boolean paused = false;
+  private volatile boolean isBlocked = false; // A "ponte" principal: true se a lógica de colisão está trabalhando.
+  private volatile int pathIndex = 0;
 
-  private int pathIndex = 0;
+  // A lógica de colisão (thread 'run') usa estas para saber onde o robô está.
+  private volatile double currentX;
+  private volatile double currentY;
+
+  // Apenas a thread 'run' deve modificar esta variável.
+  private CriticalRegion acquiredRegion = null;
 
   public Robot(int id, ImageView sprite, List<Position> path, ImageView pathVisual, Slider slider, SimulationController controller){
     this.id = id;
@@ -32,203 +39,118 @@ public class Robot  extends Thread{
     this.pathVisual = pathVisual;
     this.slider = slider;
     this.controller = controller;
+
+    if (!path.isEmpty()){
+        this.currentX = path.get(0).getX();
+        this.currentY = path.get(0).getY();
+    } else {
+        this.currentX = 0; // Posição padrão caso o caminho seja vazio
+        this.currentY = 0;
+    }
+
+    this.setDaemon(true);
     sprite.setFitWidth(40); 
     sprite.setFitHeight(40);
   }
 
-  @Override
-  public void run(){
+ @Override
+public void run() {
     try {
-      
-      Platform.runLater(() -> {
-        sprite.setLayoutX(path.get(0).getX());
-        sprite.setLayoutY(path.get(0).getY());
-      });
+        while (!Thread.currentThread().isInterrupted()) {
+            // CORRETO: Crie um "Bounds" fantasma usando as variáveis seguras (volatile)
+            Bounds currentBounds = new Rectangle(this.currentX, this.currentY, 40, 40).getBoundsInLocal();
 
-      Thread.sleep(1000); // Pausa para a UI renderizar a posição inicial
-      // --- LÓGICA DE AQUISIÇÃO DA REGIÃO INICIAL ---
-      CriticalRegion initialRegion = controller.findRegionForBounds(sprite.getBoundsInParent());
-      if (initialRegion != null) {
-        try {
-          System.out.println("Robô " + id + " try access...");
-          controller.getSemaphoreForRegion(initialRegion).acquire();
-          System.out.println("Robô " + id + " ACQUIRE REGION " + initialRegion.getId());
-          currentAcquiredCriticalRegion = initialRegion;
-          controller.setRegionOccupied(currentAcquiredCriticalRegion, this); // Registra no controlador!
-        } catch (InterruptedException e) {
-          // Se for interrompido no spawn, é importante lidar com isso.
-          Thread.currentThread().interrupt();
-          running = false;
-          return; // Sai do método run se for interrompido logo no início
-        }
-      }
-      // --- FIM DA LÓGICA DE AQUISIÇÃO DA REGIÃO INICIAL ---
-
-      while(running){
-        Position target = path.get((pathIndex + 1) % path.size());
-
-        int currentX = (int) sprite.getLayoutX();
-        int currentY = (int) sprite.getLayoutY();
-
-        while(currentX != target.getX() || currentY != target.getY() && running && !paused){
-          if(paused){
-            Thread.sleep(100);
-            continue;
-          }
-          // Calcula o próximo pixel para onde o robô vai se mover
-          int nextX = currentX - Integer.compare(currentX, target.getX());
-          int nextY = currentY - Integer.compare(currentY, target.getY());
-
-          // --- 1. Lógica de Aquisição Preventiva (Baseado no seu input) ---
-          // Criar Bounds para a **PRÓXIMA POSIÇÃO** do robô.
-          
-          Bounds futureBounds = new javafx.geometry.BoundingBox(nextX, nextY, sprite.getFitWidth(), sprite.getFitHeight());
-
-          // Identificar a região crítica que a **PRÓXIMA POSIÇÃO** vai intersectar.
-          CriticalRegion potentialNextCriticalRegion = controller.findRegionForBounds(futureBounds);
-          
-          if(potentialNextCriticalRegion != null && potentialNextCriticalRegion != currentAcquiredCriticalRegion){
-            try {
-              // Esta linha BLOQUEIA a thread do robô aqui se o semáforo não estiver livre.
-              System.out.println("Robô " + id + " try access...");
-              controller.getSemaphoreForRegion(potentialNextCriticalRegion).acquire();
-             // CORREÇÃO: Primeiro, registre no controlador que a NOVA região está ocupada por este robô.
-              controller.setRegionOccupied(potentialNextCriticalRegion, this);
-              
-              // Segundo, atualize o atributo interno do robô para refletir a nova região que ele adquiriu.
-              currentAcquiredCriticalRegion = potentialNextCriticalRegion; 
-              System.out.println("Robô " + id + " ACQUIRE REGION " + potentialNextCriticalRegion.getId());
-            } catch (InterruptedException e) {
-              Thread.currentThread().interrupt();
-              running = false;
+            // O resto da lógica de liberação permanece igual, pois agora usa os 'Bounds' seguros
+            if (acquiredRegion != null && !acquiredRegion.intersects(currentBounds)) {
+                controller.getSemaphoreForRegion(acquiredRegion).release();
+                acquiredRegion = null;
             }
-          }
 
-          currentX = nextX;
-          currentY = nextY;
+            // --- 2. LÓGICA DE AQUISIÇÃO PREVENTIVA (JÁ ESTAVA CORRETA) ---
+            // Esta parte já estava correta porque já usava 'this.currentX' e 'this.currentY'.
+            Position target = path.get((pathIndex + 1) % path.size());
+            double futureX = this.currentX - Integer.compare((int)this.currentX, target.getX());
+            double futureY = this.currentY - Integer.compare((int)this.currentY, target.getY());
+            
+            Bounds futureBounds = new Rectangle(futureX, futureY, 40, 40).getBoundsInLocal();
 
-          int finalX = currentX;
-          int finalY = currentY;
+            CriticalRegion nextRegion = controller.findRegionForBounds(futureBounds);
 
-          Platform.runLater(() -> {
-            sprite.setLayoutX(finalX);
-            sprite.setLayoutY(finalY);
-          });
+            // O resto do código não precisa de alterações
+            if (nextRegion != null && nextRegion != acquiredRegion) {
+                this.isBlocked = true;
 
-          // --- 3. Lógica de Liberação (Depois que o robô se moveu para fora de uma região) ---
-          // Pega os limites da sprite NA POSIÇÃO ATUAL (depois de mover este pixel)
-          Bounds currentSpriteBounds = sprite.getBoundsInParent();
-          // Pergunta ao controlador qual região crítica ele está ocupando AGORA.
-          CriticalRegion currentDetectedRegion = controller.findRegionForBounds(currentSpriteBounds);
-
-          // Se a região **DETETADA** agora é diferente da região **ADQUIRIDA** anteriormente,
-          // e a região ADQUIRIDA não é nula (ele estava em uma RC)
-          if (currentAcquiredCriticalRegion != null) {
-    // Verifica se ele *saiu* da região que ele adquiriu
-    boolean stillIntersectsAcquiredRegion = currentAcquiredCriticalRegion.intersects(currentSpriteBounds);
-
-    // Se ele não intersecta mais a região adquirida OU se ele entrou em uma região *diferente*
-    // da que ele adquiriu (e essa nova região *não* é nula, ou seja, ele entrou em outra RC)
-    if (!stillIntersectsAcquiredRegion || (currentDetectedRegion != null && currentDetectedRegion != currentAcquiredCriticalRegion)) {
-        // Libera o semáforo da região que ele estava segurando
-        controller.getSemaphoreForRegion(currentAcquiredCriticalRegion).release();
-        System.out.println("Robô " + id + " RELEASE " + currentAcquiredCriticalRegion.getId() + "!");
-        controller.setRegionOccupied(currentAcquiredCriticalRegion, null); // Limpa o registro de ocupante
-        
-        // Agora, atualiza currentAcquiredCriticalRegion para a nova região (se houver)
-        // ou para null se ele saiu para uma área não crítica.
-        currentAcquiredCriticalRegion = currentDetectedRegion;
-        // Se ele entrou em uma nova região, já deveria ter adquirido o semáforo dela na etapa 1.
-        // Apenas precisamos atualizar o currentAcquiredCriticalRegion para refletir isso.
-        if (currentAcquiredCriticalRegion != null) {
-            // Se ele adquiriu na etapa 1, o ocupante já foi setado.
-            // Se não, e ele está nela, algo está errado, mas a lógica de acquire deve ter pego.
-            // Apenas para garantir, se ele está nela e não é o ocupante, setamos.
-            if (controller.getRegionOccupant(currentAcquiredCriticalRegion) != this) {
-                controller.setRegionOccupied(currentAcquiredCriticalRegion, this);
+                try {
+                    controller.getSemaphoreForRegion(nextRegion).acquire();
+                    if (running) {
+                      if(acquiredRegion != null && !acquiredRegion.equals(nextRegion)){
+                        controller.getSemaphoreForRegion(acquiredRegion).release();
+                        acquiredRegion = null;
+                      }
+                        this.acquiredRegion = nextRegion;
+                    }
+                } finally {
+                    this.isBlocked = false;
+                }
+            }
+        }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restaura o status de interrupção
+        } finally {
+            // Lógica de limpeza para garantir que nenhum semáforo fique preso se a thread morrer
+            if (acquiredRegion != null) {
+                controller.getSemaphoreForRegion(acquiredRegion).release();
             }
         }
     }
-} else { // Se ele não possui nenhuma região adquirida atualmente
-    // Mas ele acabou de entrar em uma nova região crítica
-    if (currentDetectedRegion != null) {
-        // Esta é a primeira aquisição ou uma re-aquisição após ter liberado tudo
-        // Ele já deveria ter tentado adquirir na etapa 1 (potentialNextCriticalRegion)
-        currentAcquiredCriticalRegion = currentDetectedRegion;
-        // Ocupante já deve ter sido setado na etapa 1.
+
+
+   public void updateVisuals() {
+      if (paused || isBlocked || !running) {
+          return; 
+      }
+
+      Position target = path.get((pathIndex + 1) % path.size());
+
+      // Se já chegou ao destino do segmento, avança para o próximo.
+      if ((int)sprite.getLayoutX() == target.getX() && (int)sprite.getLayoutY() == target.getY()) {
+          pathIndex = (pathIndex + 1) % path.size();
+          return;
+      }
+
+      // Calcula o próximo pixel do movimento
+      double nextX = sprite.getLayoutX() - Integer.compare((int)sprite.getLayoutX(), target.getX());
+      double nextY = sprite.getLayoutY() - Integer.compare((int)sprite.getLayoutY(), target.getY());
+
+      // Atualiza a UI e o estado compartilhado
+      sprite.setLayoutX(nextX);
+      sprite.setLayoutY(nextY);
+      this.currentX = nextX;
+      this.currentY = nextY;
+  }
+
+  public void kill() {
+    this.paused = false;
+    this.isBlocked = false;
+    this.pathIndex = 0;
+
+    if (!path.isEmpty()) {
+        Position initialPos = path.get(0);
+        // Atualiza as variáveis de estado para a thread de lógica
+        this.currentX = initialPos.getX();
+        this.currentY = initialPos.getY();
+
+        // Garante que a atualização da UI ocorra na thread correta
+        Platform.runLater(() -> {
+            sprite.setLayoutX(initialPos.getX());
+            sprite.setLayoutY(initialPos.getY());
+        });
     }
 }
-          
-          Thread.sleep((long) (2 * slider.getValue()));
-        }
 
-        if(!paused){
-          pathIndex = (pathIndex + 1) % path.size(); // Go to next point
-        }
-      }
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt(); // Respeita a interrupção da thread
-      running = false;
-    }
-  }
-
-  
-  public void togglePath(){
-    if(isPathVisible()){
-      pathVisual.setVisible(false);
-    } else {
-      pathVisual.setVisible(true);
-    }
-  }
-  
-  public boolean isPathVisible(){
-    return pathVisual.isVisible();
-  }
-  
-
-  /* ***************************************************************
-  * Method: togglePause
-  * Funcao: Changes the robot's pause state
-  * Parameters: none
-  * Return: void
-  *************************************************************** */
-  public void togglePause() {
-    this.paused = !this.paused;
-  }
-
-  /* ***************************************************************
-  * Method: isPaused
-  * Function: Returns the robot's pause state
-  * Parameters: none
-  * Retorno: boolean - true if its paused, false otherwise
-  *************************************************************** */
-  public boolean isPaused() {
-    return paused;
-  }
-
-  /* ***************************************************************
-  * Method: kill
-  * Function: Stops robot execution, resets sliders and interrept the thread.
-  * Parameters: none
-  * Return: void
-  *************************************************************** */
-
-  public int getRobotId(){
-    return id;
-  }
-
-  public ImageView getSprite(){
-    return sprite;
-  }
-
-  public void kill(){
-    this.slider.setValue(6);
-    Platform.runLater(() -> {
-      pathVisual.setVisible(false);
-      sprite.setLayoutX(path.get(0).getX());
-      sprite.setLayoutY(path.get(0).getY());
-    }); 
-    this.running = false;
-    this.interrupt();
-  }
+  public void togglePause() { this.paused = !this.paused; }
+  public boolean isPaused() { return paused; }
+  public void togglePath() { pathVisual.setVisible(!pathVisual.isVisible()); }
+  public boolean isPathVisible() { return pathVisual.isVisible(); }
+  public ImageView getSprite(){ return sprite; }
 }
