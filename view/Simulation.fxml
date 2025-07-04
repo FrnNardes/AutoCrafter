@@ -33,7 +33,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Slider fx:id="sliderR1" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" rotate="180.0" value="6.0" />
+                  <Slider fx:id="sliderR1" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" value="6.0" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -58,7 +58,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Slider fx:id="sliderR2" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" rotate="180.0" value="6.0" />
+                  <Slider fx:id="sliderR2" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" value="6.0" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -83,7 +83,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Slider fx:id="sliderR3" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" rotate="180.0" value="6.0" />
+                  <Slider fx:id="sliderR3" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" value="6.0" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -108,7 +108,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Slider fx:id="sliderR4" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" rotate="180.0" value="6.0" />
+                  <Slider fx:id="sliderR4" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" value="6.0" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -133,7 +133,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Slider fx:id="sliderR5" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" rotate="180.0" value="6.0" />
+                  <Slider fx:id="sliderR5" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" value="6.0" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -158,7 +158,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Slider fx:id="sliderR6" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" rotate="180.0" value="6.0" />
+                  <Slider fx:id="sliderR6" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" value="6.0" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -183,7 +183,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Slider fx:id="sliderR7" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" rotate="180.0" value="6.0" />
+                  <Slider fx:id="sliderR7" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" value="6.0" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -208,7 +208,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Slider fx:id="sliderR8" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" rotate="180.0" value="6.0" />
+                  <Slider fx:id="sliderR8" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" value="6.0" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -219,11 +219,6 @@
             <Insets bottom="20.0" top="20.0" />
          </padding>
       </VBox>
-      <ImageView fitHeight="85.0" fitWidth="172.0" layoutX="829.0" layoutY="308.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../assets/crafting_arrow.png" />
-         </image>
-      </ImageView>
       <ImageView fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/grid.png" />
@@ -249,7 +244,7 @@
             <Image url="@../assets/path4.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="pathVisual5" fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="pathVisual5" fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/path5.png" />
          </image>
@@ -259,34 +254,37 @@
             <Image url="@../assets/path6.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="pathVisual7" fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="pathVisual7" fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/path7.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="pathVisual8" fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="pathVisual8" fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/path8.png" />
          </image>
       </ImageView>
+      <Rectangle fx:id="rec3_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="175.0" layoutX="546.0" layoutY="260.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec1_4" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="150.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="436.0" />
+      <Rectangle fx:id="rec2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="175.0" layoutX="810.0" layoutY="134.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec1_3" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="700.0" layoutX="150.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec4_3" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="175.0" layoutX="546.0" layoutY="525.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec1_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="440.0" layoutX="414.0" layoutY="260.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec4_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="129.0" layoutX="810.0" layoutY="571.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec1_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="150.0" layoutY="660.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="304.0" />
+      <Rectangle fx:id="rec4_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="660.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="304.0" />
+      <Rectangle fx:id="rec12" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="672.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="132.0" />
+      <Rectangle fx:id="rec5" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="546.0" layoutY="443.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec7" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="810.0" layoutY="313.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec6" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="132.0" layoutX="414.0" layoutY="44.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec3_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="396.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="304.0" />
+      <Rectangle fx:id="rec8" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="810.0" layoutY="443.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec9" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="546.0" layoutY="180.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec1_5" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="175.0" layoutX="546.0" layoutY="1.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec10" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="414.0" layoutY="180.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec11" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="129.0" layoutX="810.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rec13" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="591.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="76.0" />
       <Button layoutX="895.0" layoutY="22.0" mnemonicParsing="false" onAction="#reset" text="RESET" />
-      <Rectangle fx:id="rec3_1" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="126.0" layoutX="546.0" layoutY="309.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_4" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="40.0" layoutX="150.0" stroke="BLACK" strokeType="INSIDE" width="440.0" />
-      <Rectangle fx:id="rec2_2" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="309.0" layoutX="810.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_3" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="700.0" layoutX="150.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec4_3" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="175.0" layoutX="546.0" layoutY="525.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_1" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="442.0" layoutX="414.0" layoutY="258.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec4_1" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="175.0" layoutX="810.0" layoutY="525.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_2" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="40.0" layoutX="150.0" layoutY="660.0" stroke="BLACK" strokeType="INSIDE" width="304.0" />
-      <Rectangle fx:id="rec4_2" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="660.0" stroke="BLACK" strokeType="INSIDE" width="304.0" />
-      <Rectangle fx:id="rec2_1" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="40.0" layoutX="595.0" stroke="BLACK" strokeType="INSIDE" width="255.0" />
-      <Rectangle fx:id="rec5" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="76.0" layoutX="546.0" layoutY="443.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec7" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="126.0" layoutX="810.0" layoutY="313.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec6" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="206.0" layoutX="414.0" layoutY="46.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec3_2" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="396.0" stroke="BLACK" strokeType="INSIDE" width="178.0" />
-      <Rectangle fx:id="rec8" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="76.0" layoutX="810.0" layoutY="443.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec9" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="175.0" layoutX="546.0" layoutY="128.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec10" arcHeight="5.0" arcWidth="5.0" fill="#80008066" focusTraversable="true" height="76.0" layoutX="546.0" layoutY="47.0" stroke="BLACK" strokeType="INSIDE" width="40.0" />
       <ImageView fx:id="r1" fitHeight="40.0" fitWidth="40.0" layoutX="150.0" layoutY="660.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/robot-run.gif" />
@@ -312,7 +310,7 @@
             <Image url="@../assets/robot-run.gif" />
          </image>
       </ImageView>
-      <ImageView fx:id="r3" fitHeight="40.0" fitWidth="41.0" layoutX="338.0" layoutY="189.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="r3" fitHeight="40.0" fitWidth="41.0" layoutX="480.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/robot-run.gif" />
          </image>
@@ -327,5 +325,6 @@
             <Image url="@../assets/robot-run.gif" />
          </image>
       </ImageView>
+      <Rectangle fx:id="rec14" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="672.0" layoutY="527.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="178.0" />
    </children>
 </AnchorPane>

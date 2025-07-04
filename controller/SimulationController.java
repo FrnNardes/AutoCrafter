@@ -34,7 +34,7 @@ public class SimulationController{
 
   @FXML private ImageView pathButton1, pathButton2, pathButton3, pathButton4, pathButton5, pathButton6, pathButton7, pathButton8;  
 
-  @FXML private Rectangle rec1_1, rec1_2, rec1_3, rec1_4, rec2_1, rec2_2, rec3_1, rec3_2, rec4_1, rec4_2, rec4_3, rec5, rec6, rec7, rec8, rec9, rec10;
+  @FXML private Rectangle rec1_1, rec1_2, rec1_3, rec1_4, rec1_5, rec2, rec3_1, rec3_2, rec4_1, rec4_2, rec4_3, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12, rec13, rec14;
 
   @FXML private AnchorPane simulationPane;
 
@@ -68,14 +68,16 @@ public class SimulationController{
     List<Slider> sliders = Arrays.asList(sliderR1, sliderR2, sliderR3, sliderR4, sliderR5, sliderR6, sliderR7, sliderR8);
     List<List<Position>> paths = PathData.getPaths();
 
-    for (int i = 0; i < 2; i++) {
-      Robot robot = new Robot(i + 1, robotSprites.get(i), paths.get(i), pathVisuals.get(i), sliders.get(i), this);
-      activeRobots.add(robot);
+    for (int i = 0; i < 7; i++) {
+      if(i != 2 && i != 3){
+        System.out.println(i);
+        Robot robot = new Robot(i + 1, robotSprites.get(i), paths.get(i), pathVisuals.get(i), sliders.get(i), this);
+        robot.start();
+        activeRobots.add(robot);
+      }
     }
 
     configureUI();
-    activeRobots.forEach(robot -> robot.getSprite().toFront());
-    activeRobots.forEach(Thread::start);
 
     simulationTimer = new AnimationTimer() {
       @Override
@@ -104,10 +106,10 @@ public class SimulationController{
   // --- Critical  Regions ---
   private void setupCriticalRegions() {
     // Robot R4 x R5
-    List<Rectangle> pathR12 = Arrays.asList(rec1_1, rec1_2, rec1_3, rec1_4);
+    List<Rectangle> pathR12 = Arrays.asList(rec1_1, rec1_2, rec1_3, rec1_4, rec1_5);
     CriticalRegion cr1 = new CriticalRegion("regiao1", pathR12);
 
-    List<Rectangle> pathR12_1 = Arrays.asList(rec2_1, rec2_2);
+    List<Rectangle> pathR12_1 = Arrays.asList(rec2);
     CriticalRegion cr2 = new CriticalRegion("regiao2", pathR12_1);
 
     List<Rectangle> pathR12_2 = Arrays.asList(rec3_1, rec3_2);
@@ -134,8 +136,19 @@ public class SimulationController{
     List<Rectangle> pathR12_9 = Arrays.asList(rec10);
     CriticalRegion cr10 = new CriticalRegion("regiao7", pathR12_9);
 
+    List<Rectangle> pathR12_10 = Arrays.asList(rec11);
+    CriticalRegion cr11 = new CriticalRegion("regiao7", pathR12_10);
 
-    List<CriticalRegion> criticalRegions = Arrays.asList(cr1, cr2, cr3, cr4, cr5, cr6, cr7, cr8, cr9, cr10);
+    List<Rectangle> pathR12_11 = Arrays.asList(rec12);
+    CriticalRegion cr12 = new CriticalRegion("regiao7", pathR12_11);
+
+    List<Rectangle> pathR12_12 = Arrays.asList(rec13);
+    CriticalRegion cr13 = new CriticalRegion("regiao7", pathR12_12);
+
+    List<Rectangle> pathR12_13 = Arrays.asList(rec14);
+    CriticalRegion cr14 = new CriticalRegion("regiao7", pathR12_13);
+
+    List<CriticalRegion> criticalRegions = Arrays.asList(cr1, cr2, cr3, cr4, cr5, cr6, cr7, cr8, cr9, cr10, cr11, cr12, cr13, cr14);
     allCriticalRegions.addAll(criticalRegions);
 
     for(CriticalRegion region : allCriticalRegions){
