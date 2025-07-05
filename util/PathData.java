@@ -66,19 +66,21 @@ public class PathData {
     );
 
     List<Position> path3 = Arrays.asList( // Path for Robot 3
+      new Position(546, 132),
+      new Position(546, 0),
+      new Position(282, 0),
       new Position(282, 132), 
       new Position(282, 660),
       new Position(414, 660),
-      new Position(546, 660), 
-      new Position(546, 0),
-      new Position(282, 0)
+      new Position(546, 660)
     );
 
     List<Position> path4 = Arrays.asList( // Path for Robot 4
-      new Position(414, 660),
+      new Position(414, 132),
       new Position(414, 0),
       new Position(150, 0), 
-      new Position(150, 660)
+      new Position(150, 660),
+      new Position(414, 660)
     );
 
     List<Position> path5 = Arrays.asList( // Path for Robot 5

@@ -2,13 +2,9 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Semaphore;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.ColorAdjust;
@@ -20,6 +16,7 @@ import javafx.geometry.Bounds;
 import model.CriticalRegion;
 import model.Position;
 import model.Robot;
+import util.Direction;
 import util.PathData;
 
 public class SimulationController{
@@ -34,7 +31,11 @@ public class SimulationController{
 
   @FXML private ImageView pathButton1, pathButton2, pathButton3, pathButton4, pathButton5, pathButton6, pathButton7, pathButton8;  
 
-  @FXML private Rectangle rec1_1, rec1_2, rec1_3, rec1_4, rec1_5, rec2, rec3_1, rec3_2, rec4_1, rec4_2, rec4_3, rec5, rec6, rec7, rec8, rec9, rec10, rec11, rec12, rec13, rec14;
+  @FXML private Rectangle r1_1, r1_2, r1_3, r1_4, r1_5, r1_6, r1_7, r1_8, r1_9, r1_10, r1_11, r1_12, r1_13;
+  @FXML private Rectangle r2_1, r2_2, r2_3;
+  @FXML private Rectangle r4_1, r4_2;
+  @FXML private Rectangle r5_1, r5_2, r5_3, r5_4, r5_5, r5_6, r5_7, r5_8;
+  @FXML private Rectangle rx_1, rx_2, rx_3, rx_4, rx_5, rx_6;
 
   @FXML private AnchorPane simulationPane;
 
@@ -45,13 +46,11 @@ public class SimulationController{
   private final Image path_button_enable = new Image(getClass().getResourceAsStream("/assets/path_button_enable.png"));
 
   // --- Colision Controll ---
-  private Map<CriticalRegion, Semaphore> semaphoresByRegion = new HashMap<>();
-  private Map<CriticalRegion, Robot> occupantsByRegion = new HashMap<>();
   private List<CriticalRegion> allCriticalRegions = new ArrayList<>();
-  
+
+  // --- Animation ---
   private AnimationTimer simulationTimer;
   private List<Robot> activeRobots = new ArrayList<>();
-  private PathData paths = new PathData();
 
   @FXML
   public void initialize(){
@@ -59,108 +58,90 @@ public class SimulationController{
     startSimulation();
   }
 
+  // --- Critical  Regions ---
+  private void setupCriticalRegions() {
+
+    // Solitary 1
+    List<Rectangle> recR1 = Arrays.asList(rx_1);
+    CriticalRegion regionS1 = new CriticalRegion("Solitary_1", recR1);
+
+    // Solitary 2
+    List<Rectangle> recR2 = Arrays.asList(rx_2);
+    CriticalRegion regionS2 = new CriticalRegion("Solitary_1", recR2);
+
+    // Solitary 3
+    List<Rectangle> recR3 = Arrays.asList(rx_3);
+    CriticalRegion regionS3 = new CriticalRegion("Solitary_1", recR3);
+
+    // Solitary 4
+    List<Rectangle> recR4 = Arrays.asList(rx_4);
+    CriticalRegion regionS4 = new CriticalRegion("Solitary_1", recR4);
+
+    // Solitary 4
+    List<Rectangle> recR5 = Arrays.asList(rx_5);
+    CriticalRegion regionS5 = new CriticalRegion("Solitary_1", recR5);
+
+     // Solitary 4
+    List<Rectangle> recR6 = Arrays.asList(rx_6);
+    CriticalRegion regionS6 = new CriticalRegion("Solitary_1", recR6);
+
+    // Region 1
+    List<Rectangle> rectsR1 = Arrays.asList(r1_1, r1_2, r1_3, r1_4, r1_5, r1_6, r1_7, r1_8, r1_9, r1_10, r1_11, r1_12, r1_13);
+    CriticalRegion region1 = new CriticalRegion("Region_1", rectsR1);
+
+    // Region 2
+    List<Rectangle> rectsR2 = Arrays.asList(r2_1, r2_2, r2_3);
+    CriticalRegion region2 = new CriticalRegion("Region_2", rectsR2, true);
+
+    // Region 3
+    //List<Rectangle> rectsR3 = Arrays.asList(r3_1, r3_2, r3_3, r3_4);
+    //CriticalRegion region3 = new CriticalRegion("Region_3", rectsR3);
+    
+    // Region 4
+    List<Rectangle> rectsR4 = Arrays.asList(r4_1, r4_2);
+    CriticalRegion region4 = new CriticalRegion("Region_4", rectsR4);
+
+    // Region 5
+    List<Rectangle> rectsR5 = Arrays.asList(r5_1, r5_2, r5_3, r5_4, r5_5, r5_6, r5_7, r5_8);
+    CriticalRegion region5 = new CriticalRegion("Region_5", rectsR5);
+
+    allCriticalRegions.addAll(Arrays.asList(regionS1, regionS2, regionS3, regionS4, regionS5, regionS6, region1, region2, region4, region5));
+  }
+
   public void startSimulation(){
     stopSimulation();
     activeRobots.clear();
 
+    // Grouping objects as lists
     List<ImageView> robotSprites = Arrays.asList(r1, r2, r3, r4, r5, r6, r7, r8);
     List<ImageView> pathVisuals = Arrays.asList(pathVisual1, pathVisual2, pathVisual3, pathVisual4, pathVisual5, pathVisual6, pathVisual7, pathVisual8);
     List<Slider> sliders = Arrays.asList(sliderR1, sliderR2, sliderR3, sliderR4, sliderR5, sliderR6, sliderR7, sliderR8);
+
     List<List<Position>> paths = PathData.getPaths();
 
-    for (int i = 0; i < 7; i++) {
-      if(i != 2 && i != 3){
-        System.out.println(i);
-        Robot robot = new Robot(i + 1, robotSprites.get(i), paths.get(i), pathVisuals.get(i), sliders.get(i), this);
+    Robot robot;
+    for (int i = 0; i < 6; i++) { // Loop to create 8 robots
+      if(i == 2){  
+        robot = new Robot(i + 1, robotSprites.get(i), paths.get(i), pathVisuals.get(i), sliders.get(i), Direction.COUNTER_CLOCKWISE, this); 
+        robot.start();
+        activeRobots.add(robot);
+      } else if (i == 1) {
+        robot = new Robot(i + 1, robotSprites.get(i), paths.get(i), pathVisuals.get(i), sliders.get(i), Direction.CLOCKWISE, this); 
         robot.start();
         activeRobots.add(robot);
       }
     }
 
-    configureUI();
+    configureUI(); // Setup all visual paths and buttons
 
+    // Runs a animation timer for "draw" the images of the scene
     simulationTimer = new AnimationTimer() {
       @Override
       public void handle(long now) {
-          activeRobots.forEach(Robot::updateVisuals);
+        activeRobots.forEach(Robot::updateVisuals);
       }
     };
     simulationTimer.start();
-  }
-
-  private void stopSimulation() {
-    if (simulationTimer != null) {
-        simulationTimer.stop();
-    }
-
-    for (Robot robot : activeRobots) {
-        robot.interrupt();
-    }
-
-    for (CriticalRegion region : allCriticalRegions) {
-        semaphoresByRegion.put(region, new Semaphore(1));
-        occupantsByRegion.put(region, null);
-    }
-  }
-
-  // --- Critical  Regions ---
-  private void setupCriticalRegions() {
-    // Robot R4 x R5
-    List<Rectangle> pathR12 = Arrays.asList(rec1_1, rec1_2, rec1_3, rec1_4, rec1_5);
-    CriticalRegion cr1 = new CriticalRegion("regiao1", pathR12);
-
-    List<Rectangle> pathR12_1 = Arrays.asList(rec2);
-    CriticalRegion cr2 = new CriticalRegion("regiao2", pathR12_1);
-
-    List<Rectangle> pathR12_2 = Arrays.asList(rec3_1, rec3_2);
-    CriticalRegion cr3 = new CriticalRegion("regiao3", pathR12_2);
-
-    List<Rectangle> pathR12_3 = Arrays.asList(rec4_1, rec4_2, rec4_3);
-    CriticalRegion cr4 = new CriticalRegion("regiao4", pathR12_3);
-
-    List<Rectangle> pathR12_4 = Arrays.asList(rec5);
-    CriticalRegion cr5 = new CriticalRegion("regiao5", pathR12_4);
-
-    List<Rectangle> pathR12_5 = Arrays.asList(rec6);
-    CriticalRegion cr6 = new CriticalRegion("regiao6", pathR12_5);
-
-    List<Rectangle> pathR12_6 = Arrays.asList(rec7);
-    CriticalRegion cr7 = new CriticalRegion("regiao7", pathR12_6);
-
-    List<Rectangle> pathR12_7 = Arrays.asList(rec8);
-    CriticalRegion cr8 = new CriticalRegion("regiao7", pathR12_7);
-
-    List<Rectangle> pathR12_8 = Arrays.asList(rec9);
-    CriticalRegion cr9 = new CriticalRegion("regiao7", pathR12_8);
-
-    List<Rectangle> pathR12_9 = Arrays.asList(rec10);
-    CriticalRegion cr10 = new CriticalRegion("regiao7", pathR12_9);
-
-    List<Rectangle> pathR12_10 = Arrays.asList(rec11);
-    CriticalRegion cr11 = new CriticalRegion("regiao7", pathR12_10);
-
-    List<Rectangle> pathR12_11 = Arrays.asList(rec12);
-    CriticalRegion cr12 = new CriticalRegion("regiao7", pathR12_11);
-
-    List<Rectangle> pathR12_12 = Arrays.asList(rec13);
-    CriticalRegion cr13 = new CriticalRegion("regiao7", pathR12_12);
-
-    List<Rectangle> pathR12_13 = Arrays.asList(rec14);
-    CriticalRegion cr14 = new CriticalRegion("regiao7", pathR12_13);
-
-    List<CriticalRegion> criticalRegions = Arrays.asList(cr1, cr2, cr3, cr4, cr5, cr6, cr7, cr8, cr9, cr10, cr11, cr12, cr13, cr14);
-    allCriticalRegions.addAll(criticalRegions);
-
-    for(CriticalRegion region : allCriticalRegions){
-      semaphoresByRegion.put(region, new Semaphore(1));
-      occupantsByRegion.put(region, null);
-    }
-  }
-
-  // --- Critical Regions Methods ---
-  // Retorna o semáforo associado a uma região específica.
-  public Semaphore getSemaphoreForRegion(CriticalRegion region) {
-      return semaphoresByRegion.get(region);
   }
 
   // Método para encontrar a região crítica baseada nos limites do robô.
@@ -174,29 +155,39 @@ public class SimulationController{
   }
 
   private void configureUI() {
-      List<ImageView> pauseButtons = Arrays.asList(pauseButton1, pauseButton2, pauseButton3, pauseButton4, pauseButton5, pauseButton6, pauseButton7, pauseButton8);
-      List<ImageView> pathButtons = Arrays.asList(pathButton1, pathButton2, pathButton3, pathButton4, pathButton5, pathButton6, pathButton7, pathButton8);
-      List<ImageView> pathVisuals = Arrays.asList(pathVisual1, pathVisual2, pathVisual3, pathVisual4, pathVisual5, pathVisual6, pathVisual7, pathVisual8);
+    List<ImageView> pathVisuals = Arrays.asList(pathVisual1, pathVisual2, pathVisual3, pathVisual4, pathVisual5, pathVisual6, pathVisual7, pathVisual8);
+    List<ImageView> pauseButtons = Arrays.asList(pauseButton1, pauseButton2, pauseButton3, pauseButton4, pauseButton5, pauseButton6, pauseButton7, pauseButton8);
+    List<ImageView> pathButtons = Arrays.asList(pathButton1, pathButton2, pathButton3, pathButton4, pathButton5, pathButton6, pathButton7, pathButton8);
+    for (int i = 0; i < activeRobots.size(); i++) {
+        final Robot robot = activeRobots.get(i);
+        final ImageView pauseBtn = pauseButtons.get(i);
+        final ImageView pathBtn = pathButtons.get(i);
 
-      for (int i = 0; i < activeRobots.size(); i++) {
-          final Robot robot = activeRobots.get(i);
-          final ImageView pauseBtn = pauseButtons.get(i);
-          final ImageView pathBtn = pathButtons.get(i);
+        pathVisuals.get(i).setVisible(false);
+        pathBtn.setImage(path_button_disable);
+        pauseBtn.setImage(pause_button);
 
-          pathVisuals.get(i).setVisible(false);
-          pathBtn.setImage(path_button_disable);
-          pauseBtn.setImage(pause_button);
+        pauseBtn.setOnMouseClicked(event -> {
+          robot.togglePause();
+          pauseBtn.setImage(robot.isPaused() ? play_button : pause_button);
+        });
+        pathBtn.setOnMouseClicked(event -> {
+          robot.togglePath();
+          pathBtn.setImage(robot.isPathVisible() ? path_button_enable : path_button_disable);
+        });
+        applyButtonAnimation(pauseBtn, pathBtn);
+    }
+  }
 
-          pauseBtn.setOnMouseClicked(event -> {
-              robot.togglePause();
-              pauseBtn.setImage(robot.isPaused() ? play_button : pause_button);
-          });
-          pathBtn.setOnMouseClicked(event -> {
-              robot.togglePath();
-              pathBtn.setImage(robot.isPathVisible() ? path_button_enable : path_button_disable);
-          });
-          applyButtonAnimation(pauseBtn, pathBtn);
-      }
+  private void stopSimulation() {
+    if (simulationTimer != null) {
+      simulationTimer.stop();
+    }
+
+    for (Robot robot : activeRobots) {
+      robot.resetPosition();
+      robot.interrupt();
+    }
   }
 
   @FXML

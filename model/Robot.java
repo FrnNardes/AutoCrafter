@@ -2,7 +2,6 @@ package model;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
 
 import controller.SimulationController;
 import javafx.application.Platform;
@@ -10,9 +9,10 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
+import util.Direction;
 
 public class Robot extends Thread {
-    // --- Atributos (sem alterações) ---
+    // --- Atributos ---
     private final int id;
     private final ImageView sprite;
     private final ImageView pathVisual;
@@ -20,27 +20,36 @@ public class Robot extends Thread {
     private final SimulationController controller;
     private final Slider slider;
 
-    // --- Sincronização e Estado ---
+    // --- Sincronizacao e Estado ---
     private volatile boolean running = true;
     private volatile boolean paused = false;
     private volatile int pathIndex = 0;
     private volatile double currentX;
     private volatile double currentY;
+    private final double ARRIVAL_DISTANCE = 5.0;
+
+    // --- Colision System ---
+    private final Direction direction;
+    private volatile Bounds futureBounds;
+    private volatile Bounds currentBounds;
     private volatile CountDownLatch movementLatch;
     private volatile boolean isClearedToMove = false;
-    
-    private CriticalRegion acquiredRegion = null;
-    private CriticalRegion physicalRegion = null;
-    private CriticalRegion nextPhysicalRegion = null;
+    private Rectangle acquiredStreet = null;
+    private Rectangle nextPhysicalStreet = null;
+
+    private CriticalRegion currentRegion = null;
+    private CriticalRegion futureRegion = null;
+
     private final Rectangle boundsCalculator = new Rectangle(40, 40);
 
-    public Robot(int id, ImageView sprite, List<Position> path, ImageView pathVisual, Slider slider, SimulationController controller) {
+    public Robot(int id, ImageView sprite, List<Position> path, ImageView pathVisual, Slider slider, Direction direction, SimulationController controller) {
         this.id = id;
         this.sprite = sprite;
         this.path = path;
         this.pathVisual = pathVisual;
         this.slider = slider;
         this.controller = controller;
+        this.direction = direction;
 
         if (!path.isEmpty()) {
             this.currentX = path.get(0).getX();
@@ -54,78 +63,81 @@ public class Robot extends Thread {
         resetPosition();
     }
 
-    @Override
     public void run() {
         try {
             while (running && !Thread.currentThread().isInterrupted()) {
-                Thread.sleep(5);
-                
-                // 1. Autoriza o movimento e prepara o latch.
                 this.movementLatch = new CountDownLatch(1);
                 this.isClearedToMove = true;
-                System.out.printf("[ROBO %d | RUN] Autorizando movimento. Aguardando sinal do Piloto...%n", id);
 
-                // 2. Dorme e espera o sinal.
                 movementLatch.await();
-                // 3. Acorda.
-                this.isClearedToMove = false;
-                System.out.printf("[ROBO %d | RUN] SINAL RECEBIDO! Movimento pausado para análise.%n", id);
-                
-
                 if (!running) break;
-
-                System.out.printf("[ROBO %d | RUN] Análise - Posicao Fisica: %-10s | Posicao adquirida: %s%n",
+                
+                this.isClearedToMove = false; 
+                System.out.printf("[ROBO %d | RUN] SINAL RECEBIDO!%n", id);
+                System.out.printf("[ROBO %d | RUN] ANALISANDO - Estado: Adquirida= [%s] | Próxima= [%s]%n",
                         id,
-                        (physicalRegion != null ? physicalRegion.getId() : "NENHUMA"),
-                        (acquiredRegion != null ? acquiredRegion.getId() : "NENHUMA"));
+                        (acquiredStreet != null ? acquiredStreet.getId() : "NENHUMA"),
+                        (nextPhysicalStreet != null ? nextPhysicalStreet.getId() : "NENHUMA"));
 
-                if (physicalRegion != acquiredRegion) {
-                    if (acquiredRegion != null) {
-                        System.out.printf("[ROBO %d | RUN] Decisão: LIBERAR semaforo da regiao %s.%n", id, acquiredRegion.getId());
-                        controller.getSemaphoreForRegion(acquiredRegion).release();
-                        this.acquiredRegion = null;
+                if (futureRegion != null) {
+                    while (futureRegion.getDirection() != Direction.NONE && futureRegion.getDirection() != this.getDirection()) {
+                        System.out.printf("[ROBO %d | RUN] BLOQUEADO. Direção da região é %s.%n", id, futureRegion.getDirection());
+                        Thread.sleep(1000);
                     }
-                    if (physicalRegion != null) {
-                        System.out.printf("[ROBO %d | RUN] Decisão: ADQUIRIR semaforo para a regiao %s...%n", id, physicalRegion.getId());
-                        controller.getSemaphoreForRegion(physicalRegion).acquire();
-                        this.acquiredRegion = physicalRegion;
-                        System.out.printf("[ROBO %d | RUN] SUCESSO! Posse da regiao %s confirmada.%n", id, physicalRegion.getId());
-                    } else {
-                        this.physicalRegion = null;
-                        System.out.printf("[ROBO %d | RUN] Decisão: ROBO agora está em área livre.%n", id);
+
+                    while (futureRegion.isEgoist() && !futureRegion.getOccupants().contains(this) && futureRegion.getOccupants().size() > 0) {
+                        System.out.printf("[ROBO %d | RUN] REGIAO EGOISTA BLOQUEADA.%n", id);
+                        Thread.sleep(1000);
                     }
-                } else if(physicalRegion == null && acquiredRegion == null){
-                    System.out.printf("[ROBO %d | RUN] DECISAO1: ADQUIRIR semaforo para a proxima regiao %s...%n", id, nextPhysicalRegion.getId());
-                    System.out.println(controller.getSemaphoreForRegion(nextPhysicalRegion).availablePermits());
-                    controller.getSemaphoreForRegion(nextPhysicalRegion).acquire();
-                    this.acquiredRegion = nextPhysicalRegion;
-                    this.physicalRegion = nextPhysicalRegion;
-                }else{
-                  if(nextPhysicalRegion != null){
-                    System.out.printf("[ROBO %d | RUN] DECISAO1: ADQUIRIR semaforo para a proxima regiao %s...%n", id, nextPhysicalRegion.getId());
-                    System.out.println(controller.getSemaphoreForRegion(nextPhysicalRegion).availablePermits());
-                    controller.getSemaphoreForRegion(nextPhysicalRegion).acquire();
-                    if(acquiredRegion != null){
-                      System.out.printf("[ROBO %d | RUN] DECISAO2: LIBERAR semaforo da regiao %s.%n", id, acquiredRegion.getId());
-                      controller.getSemaphoreForRegion(acquiredRegion).release();
-                    }
-                    this.acquiredRegion = nextPhysicalRegion;
-                  } else {
-                    System.out.printf("[ROBO %d | RUN] DECISAO1: ROBO agora está em área livre.%n", id);
-                    System.out.printf("[ROBO %d | RUN] DECISAO2: LIBERAR semaforo da regiao %s.%n", id, acquiredRegion.getId());
-                    controller.getSemaphoreForRegion(acquiredRegion).release();
-                    this.physicalRegion = null;
-                    this.acquiredRegion = null;
-                  }
-              }
+                }
+
+                if (nextPhysicalStreet != acquiredStreet) {
+                    releaseAcquiredStreet();
+                    acquireTargetRegion(nextPhysicalStreet);
+                }
+                
+                System.out.printf("[ROBO %d | RUN] ANALISE COMPLETA. Robo .%n", id);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            System.out.printf("[ROBO %d | RUN] Thread interrompida.%n", id);
         } finally {
-            if (physicalRegion != null) {
-                System.out.printf("[ROBO %d | RUN] FIM DA THREAD. Liberando semaforo final da regiao %s.%n", id, physicalRegion.getId());
-                controller.getSemaphoreForRegion(physicalRegion).release();
+            System.out.printf("[ROBO %d | RUN] Fim da thread. Garantindo liberacao final...%n", id);
+            releaseAcquiredStreet(); 
+        }
+    }
+
+    private void releaseAcquiredStreet() {
+        if (acquiredStreet != null) {
+            System.out.printf("[ROBO %d | RUN] Liberando semáforo da regiao %s...%n", id, acquiredStreet.getId());
+            controller.findRegionForBounds(currentBounds).getSemaphoreForRec(acquiredStreet).release();
+            this.acquiredStreet = null;
+            if(nextPhysicalStreet == null){
+                currentRegion.removeOccupant(this);
+                if(currentRegion.getOccupants().size() == 0){
+                    currentRegion.setDirection(Direction.NONE);
+                    System.out.println("[ROBO " + id + " | RUN] Mudando direcao da "+ currentRegion.getId() + " - " + currentRegion.getDirection());
+                }
             }
+        }
+    }
+
+    private void acquireTargetRegion(Rectangle streetToAcquire) throws InterruptedException {
+        if (streetToAcquire != null) {
+            System.out.printf("[ROBO %d | RUN] Adquirindo semáforo da regiao %s...%n", id, streetToAcquire.getId());
+            
+            futureRegion.getSemaphoreForRec(streetToAcquire).acquire();
+            this.acquiredStreet = streetToAcquire;
+            
+            if(!futureRegion.getOccupants().contains(this)){
+                futureRegion.addOccupant(this);
+            }
+
+            futureRegion.setDirection(this.direction);
+            System.out.println("[ROBO " + id + " | RUN] Mudando direcao da "+ futureRegion.getId() + " - " + futureRegion.getDirection());
+            System.out.printf("[ROBO %d | RUN] SUCESSO! Posse da regiao %s confirmada.%n", id, acquiredStreet.getId());
+        } else {
+            System.out.printf("[ROBO %d | RUN] ROBO EM AREA LIVRE.%n", id);
         }
     }
 
@@ -135,22 +147,22 @@ public class Robot extends Thread {
         }
         
         // --- Lógica de Movimento ---
-        double currentX = sprite.getLayoutX();
-        double currentY = sprite.getLayoutY();
+        currentX = sprite.getLayoutX();
+        currentY = sprite.getLayoutY();
 
-        boundsCalculator.setX(this.currentX);
-        boundsCalculator.setY(this.currentY);
-        Bounds currentBounds = boundsCalculator.getBoundsInLocal();
-        physicalRegion = controller.findRegionForBounds(currentBounds);
+        boundsCalculator.setX(currentX);
+        boundsCalculator.setY(currentY);
+        currentBounds = boundsCalculator.getBoundsInLocal();
+
+        currentRegion = controller.findRegionForBounds(currentBounds);
 
         Position target = path.get((pathIndex + 1) % path.size());
-        // ... (cálculo de nextX/nextY) ...
+
         double targetX = target.getX();
         double targetY = target.getY();
         double deltaX = targetX - currentX;
         double deltaY = targetY - currentY;
         double distanceToTarget = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        final double ARRIVAL_DISTANCE = 20.0;
 
         if (distanceToTarget < ARRIVAL_DISTANCE) {
             pathIndex = (pathIndex + 1) % path.size();
@@ -166,13 +178,18 @@ public class Robot extends Thread {
         // --- Lógica do Vigia ---
         boundsCalculator.setX(nextX);
         boundsCalculator.setY(nextY);
-        Bounds futureBounds = boundsCalculator.getBoundsInLocal();
-        nextPhysicalRegion = controller.findRegionForBounds(futureBounds);
+        futureBounds = boundsCalculator.getBoundsInLocal();
 
-        if (nextPhysicalRegion != acquiredRegion) {
-          System.out.printf("[ROBO %d | UI] MUDANDO DE ROTA COLISORA! Próxima regiao: %-10s | Regiao Atual Adquirida: %s. Sinalizando Torre...%n",id,
-            (nextPhysicalRegion != null ? nextPhysicalRegion.getId() : "NENHUMA"),
-            (acquiredRegion != null ? acquiredRegion.getId() : "NENHUMA"));
+        futureRegion = controller.findRegionForBounds(futureBounds);
+
+        if(futureRegion != null){
+            nextPhysicalStreet = futureRegion.findRecForBounds(futureBounds);
+        }
+
+        if (nextPhysicalStreet != acquiredStreet) {
+          System.out.printf("[ROBO %d | UI] MUDANDO DE ROTA COLISORA! Estado: Proxima Regiao = [%s] | Regiao Atual Adquirida = [%s]%n",id,
+            (nextPhysicalStreet != null ? nextPhysicalStreet.getId() : "NENHUMA"),
+            (acquiredStreet != null ? acquiredStreet.getId() : "NENHUMA"));
           
           if (movementLatch != null && movementLatch.getCount() > 0) {
             movementLatch.countDown();
@@ -198,6 +215,8 @@ public class Robot extends Thread {
         this.paused = false;
         this.isClearedToMove = false;
         this.pathIndex = 0;
+        this.acquiredStreet = null;
+        this.nextPhysicalStreet = null;
         if (!path.isEmpty()) {
             Position initialPos = path.get(0);
             this.currentX = initialPos.getX();
@@ -218,4 +237,5 @@ public class Robot extends Thread {
     public void togglePath() { pathVisual.setVisible(!pathVisual.isVisible()); }
     public boolean isPathVisible() { return pathVisual.isVisible(); }
     public ImageView getSprite() { return sprite; }
+    public Direction getDirection() { return direction; }
 }

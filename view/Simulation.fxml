@@ -259,48 +259,35 @@
             <Image url="@../assets/path7.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="pathVisual8" fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="pathVisual8" fitHeight="700.0" fitWidth="700.0" layoutX="150.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../assets/path8.png" />
          </image>
       </ImageView>
-      <Rectangle fx:id="rec3_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="175.0" layoutX="546.0" layoutY="260.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_4" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="150.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="436.0" />
-      <Rectangle fx:id="rec2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="175.0" layoutX="810.0" layoutY="134.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_3" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="700.0" layoutX="150.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec4_3" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="175.0" layoutX="546.0" layoutY="525.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="440.0" layoutX="414.0" layoutY="260.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec4_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="129.0" layoutX="810.0" layoutY="571.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="150.0" layoutY="660.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="304.0" />
-      <Rectangle fx:id="rec4_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="660.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="304.0" />
-      <Rectangle fx:id="rec12" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="672.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="132.0" />
-      <Rectangle fx:id="rec5" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="546.0" layoutY="443.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec7" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="810.0" layoutY="313.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec6" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="132.0" layoutX="414.0" layoutY="44.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec3_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="396.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="304.0" />
-      <Rectangle fx:id="rec8" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="810.0" layoutY="443.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec9" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="546.0" layoutY="180.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec1_5" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="175.0" layoutX="546.0" layoutY="1.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec10" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="76.0" layoutX="414.0" layoutY="180.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec11" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="129.0" layoutX="810.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
-      <Rectangle fx:id="rec13" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="591.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="76.0" />
+      <Rectangle fx:id="r1_4" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="130.0" layoutX="150.0" layoutY="570.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r1_5" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="135.0" layoutX="150.0" layoutY="437.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r1_6" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="135.0" layoutX="150.0" layoutY="304.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r1_7" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="130.0" layoutX="150.0" layoutY="174.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r1_8" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="135.0" layoutX="150.0" layoutY="40.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r1_10" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="280.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="176.0" />
+      <Rectangle fx:id="r1_9" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="150.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="130.0" />
       <Button layoutX="895.0" layoutY="22.0" mnemonicParsing="false" onAction="#reset" text="RESET" />
-      <ImageView fx:id="r1" fitHeight="40.0" fitWidth="40.0" layoutX="150.0" layoutY="660.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="r1" fitHeight="40.0" fitWidth="40.0" layoutX="354.0" layoutY="459.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/robot-run.gif" />
          </image>
       </ImageView>
-      <ImageView fx:id="r2" fitHeight="40.0" fitWidth="40.0" layoutX="224.0" layoutY="189.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="r2" fitHeight="40.0" fitWidth="40.0" layoutX="923.0" layoutY="410.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/robot-run.gif" />
          </image>
       </ImageView>
-      <ImageView fx:id="r4" fitHeight="40.0" fitWidth="40.0" layoutX="350.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="r4" fitHeight="40.0" fitWidth="40.0" layoutX="903.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/robot-run.gif" />
          </image>
       </ImageView>
-      <ImageView fx:id="r5" fitHeight="40.0" fitWidth="40.0" layoutX="214.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="r5" fitHeight="40.0" fitWidth="40.0" layoutX="899.0" layoutY="330.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/robot-run.gif" />
          </image>
@@ -310,7 +297,7 @@
             <Image url="@../assets/robot-run.gif" />
          </image>
       </ImageView>
-      <ImageView fx:id="r3" fitHeight="40.0" fitWidth="41.0" layoutX="480.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="r3" fitHeight="40.0" fitWidth="41.0" layoutX="903.0" layoutY="273.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/robot-run.gif" />
          </image>
@@ -325,6 +312,30 @@
             <Image url="@../assets/robot-run.gif" />
          </image>
       </ImageView>
-      <Rectangle fx:id="rec14" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="672.0" layoutY="527.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="178.0" />
+      <Rectangle fx:id="r1_3" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="190.0" layoutY="660.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="135.0" />
+      <Rectangle fx:id="r1_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="325.0" layoutY="660.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="130.0" />
+      <Rectangle fx:id="r1_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="135.0" layoutX="414.0" layoutY="525.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r1_12" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="130.0" layoutX="414.0" layoutY="395.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r1_11" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="135.0" layoutX="414.0" layoutY="260.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r2_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="305.0" layoutX="546.0" layoutY="132.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rx_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="135.0" layoutX="546.0" layoutY="525.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r5_7" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="180.0" layoutX="810.0" layoutY="521.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r5_8" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="680.0" layoutY="660.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="130.0" />
+      <Rectangle fx:id="rx_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="660.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="135.0" />
+      <Rectangle fx:id="r1_13" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="456.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="130.0" />
+      <Rectangle fx:id="r5_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="720.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="130.0" />
+      <Rectangle fx:id="r5_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="585.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="135.0" />
+      <Rectangle fx:id="r5_3" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="135.0" layoutX="810.0" layoutY="40.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r5_4" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="130.0" layoutX="810.0" layoutY="175.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r4_1" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="141.0" layoutX="414.0" layoutY="39.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r2_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="265.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="176.0" />
+      <Rectangle fx:id="r5_5" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="130.0" layoutX="810.0" layoutY="305.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r2_3" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="40.0" layoutX="546.0" layoutY="396.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="176.0" />
+      <Rectangle fx:id="r4_2" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="79.0" layoutX="414.0" layoutY="180.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rx_3" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="85.0" layoutX="546.0" layoutY="438.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="r5_6" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="85.0" layoutX="810.0" layoutY="436.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rx_4" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="64.0" layoutX="546.0" layoutY="57.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="40.0" />
+      <Rectangle fx:id="rx_5" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="60.0" layoutX="272.0" layoutY="122.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="60.0" />
+      <Rectangle fx:id="rx_6" arcHeight="5.0" arcWidth="5.0" fill="#8000802b" focusTraversable="true" height="60.0" layoutX="272.0" layoutY="517.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="60.0" />
    </children>
 </AnchorPane>
